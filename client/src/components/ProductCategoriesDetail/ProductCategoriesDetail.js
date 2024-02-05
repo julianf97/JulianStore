@@ -2,20 +2,20 @@ import styled from "styled-components";
 
 export const ContainerProductCategories = styled.div`
   // Mobile
-  @media (max-width: 600px) {
+  @media (max-width: 700px) {
     width: 100%;
     height: 40px;
     display: flex;
     justify-content: center;
-    padding-top: 50px;
+    padding-top: 60px;
   }
   // Ipad
-  @media only screen and (min-width: 601px) and (max-width: 1025px) {
+  @media only screen and (min-width: 701px) and (max-width: 1025px) {
     width: 100%;
     height: 40px;
     display: flex;
+    padding-top: 40px;
     justify-content: center;
-    padding-top: 50px;
   }
   // Desktop
   @media only screen and (min-width: 1026px) {
@@ -23,7 +23,7 @@ export const ContainerProductCategories = styled.div`
     height: 40px;
     display: flex;
     justify-content: center;
-    padding-top: 50px;
+    padding-top: 40px;
   }
 `;
 

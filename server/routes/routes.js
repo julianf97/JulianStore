@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
 
 router.get("/api/items", async (req, res) => {
     try {
-        // Paso 1: Obtener el parámetro  de búsqueda de la consulta
+        // Paso 1: Obtener el parámetro de búsqueda de la consulta
         const query = req.query.q;
 
         // Paso 2: Realizar una solicitud a la API de MercadoLibre utilizando fetch
@@ -23,7 +23,17 @@ router.get("/api/items", async (req, res) => {
                 lastname: "Finelli"
             },
             categories: [], 
-            items: data.results.slice(0, 4).map(item => ({
+            items: []
+        };
+
+        // Paso 4: Obtener detalles adicionales para cada item (incluyendo state y city)
+        for (const item of data.results.slice(0, 4)) {
+            const itemDetailsUrl = `https://api.mercadolibre.com/items/${item.id}`;
+            const itemDetailsResponse = await fetch(itemDetailsUrl);
+            const itemDetailsData = await itemDetailsResponse.json();
+
+            // Formatear cada item con la dirección (state y city)
+            const formattedItem = {
                 id: item.id,
                 title: item.title,
                 price: {
@@ -35,11 +45,17 @@ router.get("/api/items", async (req, res) => {
                 condition: item.condition,
                 free_shipping: item.shipping.free_shipping,
                 category_id: item.category_id,
-                available_quantity: item.available_quantity
-            }))
-        };
+                available_quantity: item.available_quantity,
+                seller_address: {
+                    state: itemDetailsData.seller_address.state.name || null,
+                    city: itemDetailsData.seller_address.city.name || null
+                },
+            };
 
-        // Paso 4: Enviar la respuesta formateada como JSON
+            response.items.push(formattedItem);
+        }
+
+        // Paso 5: Enviar la respuesta formateada como JSON
         res.json(response);
     } catch (error) {
         // Manejar errores
@@ -47,6 +63,7 @@ router.get("/api/items", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
 
 router.get("/api/items/:itemId", async (req, res) => {
     try {
@@ -87,7 +104,8 @@ router.get("/api/items/:itemId", async (req, res) => {
                 category_id: itemDetailsData.category_id,
                 sold_quantity: itemDetailsData.sold_quantity,
                 description: itemDetailsData.descriptions,
-                available_quantity: matchedItem ? matchedItem.available_quantity : 0
+                available_quantity: matchedItem ? matchedItem.available_quantity : 0,
+                seller_address: itemDetailsData.seller_address.state
             }
         };
 

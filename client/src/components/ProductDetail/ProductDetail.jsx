@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import SearchBar from '../SearchBar/SearchBar';
-import ProductCategories from '../ProductCategories/ProductCategories.jsx';
+import ProductCategoriesDetail from "../ProductCategoriesDetail/ProductCategoriesDetail.jsx"
+import { ItemCategoryContext } from '../../context/ItemCategoryContext/ItemCategoryContext.jsx';
+import { useContext } from "react";
+import useCategoryItem from '../../hooks/useCategoryItem'; // Importa el custom hook
+
 import {
   ContainerProductDetail,
   ImgProductDetail,
@@ -19,18 +23,53 @@ const ProductDetail = () => {
   const { itemId } = useParams(); 
   const [productDetails, setProductDetails] = useState(null);
   const [productDescription, setProductDescription] = useState(null);
-  const [items, setItems] = useState({});
+
+  const [newCategoryText, setNewCategoryText] = useState([]);
+
+  const { setActiveItemCategory, setStoredCategories } = useContext(ItemCategoryContext);
+  const { getCategoryItem } = useCategoryItem(); // Utiliza el custom hook
+
+  const navigate = useNavigate();
 
   const handleSearch = async (query) => {
+    if (localStorage.getItem('activeItemCategory')) {
+      localStorage.removeItem('activeItemCategory');
+    }
+    
+    // Limpiar estados al realizar una nueva búsqueda
+    setStoredCategories([]);
+    setActiveItemCategory("");
+
     try {
       const response = await fetch(`http://localhost:3000/api/items?q=${query}`);
-      
       const data = await response.json();
 
-      setItems(data)
+      // Almacena los elementos de la búsqueda en el estado local
+      localStorage.setItem('searchItems', JSON.stringify(data));
 
-      console.log(items)
+      console.log(query);
+      console.log(data);
 
+      // Utiliza el custom hook para obtener las nuevas categorías
+      if (data.items && data.items.length > 0) {
+        const firstItem = data.items[0];
+        if (firstItem.category_id) {
+          await getCategoryItem(firstItem.category_id);
+
+          // Utiliza el custom hook para obtener las nuevas categorías
+          const newCategories = await getCategoryItem(firstItem.category_id);
+          
+          // Almacena las nuevas categorías en el estado local
+          setNewCategoryText(newCategories);
+        
+          // Agrega un console.log para imprimir las categorías
+        } else {
+          console.error('Invalid item category ID:', firstItem.category_id);
+        }
+      }
+
+      // Redirigir a la página de productos con la nueva búsqueda
+      navigate('/products');
     } catch (error) {
       console.error(error);
     }
@@ -55,7 +94,7 @@ const ProductDetail = () => {
       try {
         const response = await fetch(`https://api.mercadolibre.com/items/${itemId}/description`);
         const data = await response.json();
-        setProductDescription(data)
+        setProductDescription(data);
       } catch (error) {
         console.error(error);
       }
@@ -64,20 +103,16 @@ const ProductDetail = () => {
     fetchProductDescription();
   }, [itemId]);
 
-  console.log(productDetails);
-
-  if (!productDetails) {
-    return <div>Cargando...</div>; // Otra opción es renderizar un spinner u otro indicador de carga
+  if (!productDetails || !productDescription) {
+    return <div>Cargando...</div>;
   }
 
-  if (!productDescription) {
-    return <div>Cargando...</div>; // Otra opción es renderizar un spinner u otro indicador de carga
-  }
+  console.log(productDetails)
 
   return (
     <>
       <SearchBar onSearch={handleSearch}/>
-      <ProductCategories />
+      <ProductCategoriesDetail/>
       <ContainerProductDetail>
         <InnerContainerProductDetail>
           <ImgAndPriceProductDetail>
@@ -86,7 +121,7 @@ const ProductDetail = () => {
             </ImgProductDetail>
             <PriceProductDetail>
               <CantidadProductDetail>
-              <span>{productDetails.item.condition === "new" ? "Nuevo" : "Usado"} - {productDetails.item.available_quantity} vendidos</span>
+                <span>{productDetails.item.condition === "new" ? "Nuevo" : "Usado"} - {productDetails.item.available_quantity} en stock</span>
               </CantidadProductDetail>
               <TitleProduct>
                 <h1>{productDetails.item.title}</h1>

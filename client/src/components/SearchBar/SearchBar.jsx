@@ -1,18 +1,11 @@
 /* eslint react/prop-types: 0 */
-import { 
-  InnerContainer, 
-  InputContainer, 
-  LogoContainer, 
-  SearchBarContainer, 
-  IconSearchContainer
- } from "./SearchBar.styled"
- import { useState } from "react";
- import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
- import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import Logo from "../../../public/logo.png"
+import { InnerContainer, InputContainer, LogoContainer, SearchBarContainer, IconSearchContainer } from "./SearchBar.styled";
+import { useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import Logo from "../../../public/logo.png";
 
 export default function SearchBar({ onSearch }) {
-
   const [inputValue, setInputValue] = useState('');
 
   const handleInputChange = (event) => {
@@ -20,6 +13,9 @@ export default function SearchBar({ onSearch }) {
   };
 
   const handleSubmit = () => {
+    // Limpiar el localStorage antes de realizar una nueva búsqueda
+    localStorage.removeItem('searchItems');
+
     console.log("Valor del input:", inputValue);
 
     // Convertir el string a una cadena JSON

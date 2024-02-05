@@ -5,16 +5,18 @@ import Products from '../Products/Products';
 
 export default function MyApp() {
   const [items, setItems] = useState({});
-  const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = async (query) => {
+
     try {
+
+      localStorage.removeItem('activeItemCategory');
+
       const response = await fetch(`http://localhost:3000/api/items?q=${query}`);
       
       const data = await response.json();
 
       setItems(data);
-      setSearchQuery(query);
 
     } catch (error) {
       console.error(error);
@@ -25,7 +27,7 @@ export default function MyApp() {
     <>
       <SearchBar onSearch={handleSearch} />
       <ProductCategories items={items} />
-      <Products items={items} searchQuery={searchQuery} />
+      <Products items={items} />
     </>
   );
 }
