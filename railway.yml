@@ -1,0 +1,7 @@
+version: 2
+services:
+  - name: backend
+    type: node
+    command: "npm start"
+databases:
+  - type: postgres
