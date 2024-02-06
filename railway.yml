@@ -1,5 +1,0 @@
-version: 2
-services:
-  - name: backend
-    type: node
-    command: "npm start"  # Ajusta según el comando para iniciar tu servidor
