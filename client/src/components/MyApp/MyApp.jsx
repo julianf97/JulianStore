@@ -13,7 +13,6 @@ export default function MyApp() {
       localStorage.removeItem('activeItemCategory');
 
       const response = await fetch(`https://server-julianstore.onrender.com/api/items?q=${query}`);
-
       
       const data = await response.json();
 
