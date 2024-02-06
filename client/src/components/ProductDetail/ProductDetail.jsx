@@ -41,7 +41,7 @@ const ProductDetail = () => {
     setActiveItemCategory("");
 
     try {
-      const response = await fetch(`http://localhost:3000/api/items?q=${query}`);
+      const response = await fetch(`https://server-julianstore.onrender.com/api/items?q=${query}`);
       const data = await response.json();
 
       // Almacena los elementos de la búsqueda en el estado local
@@ -78,7 +78,7 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/items/${itemId}`);
+        const response = await fetch(`https://server-julianstore.onrender.com/api/items/${itemId}`);
         const data = await response.json();
         setProductDetails(data);
       } catch (error) {
