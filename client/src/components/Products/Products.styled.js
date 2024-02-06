@@ -248,7 +248,7 @@ export const PriceContainer = styled.div`
 export const DescriptionContainer = styled.div`
   // Mobile
   @media (max-width: 600px) {
-    width: 200px;
+    width: 110px;
     height: 150px;
     display: flex;
     h5{
