@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": "versión-compatible-con-Railway"
+    "node": "14.x"
   },
   "dependencies": {
     "cors": "^2.8.5",
