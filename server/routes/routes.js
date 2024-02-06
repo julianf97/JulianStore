@@ -1,4 +1,5 @@
 import express from "express";
+import fetch from "node-fetch"; 
 
 const router = express.Router();
 
@@ -64,7 +65,6 @@ router.get("/api/items", async (req, res) => {
     }
 });
 
-
 router.get("/api/items/:itemId", async (req, res) => {
     try {
         // Obtener el ID del producto de los parámetros de la URL
@@ -117,9 +117,5 @@ router.get("/api/items/:itemId", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
-
-
-
-
 
 export default router;
